@@ -55,5 +55,8 @@
   "packageManager": "yarn@3.2.3",
   "engines": {
     "node": ">=20.18.3"
+  },
+  "resolutions": {
+    "ethereumjs-abi": "npm:ethereumjs-abi@0.6.8"
   }
 }
