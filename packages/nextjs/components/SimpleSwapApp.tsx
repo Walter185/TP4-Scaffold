@@ -17,29 +17,31 @@ const abiERC20 = [
 ];
 
 export default function SimpleSwapApp() {
-  const [provider, setProvider] = useState<any>();
-  const [signer, setSigner] = useState<any>();
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
+  const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [account, setAccount] = useState<string>("");
-  const [amount, setAmount] = useState("0");
-  const [price, setPrice] = useState("");
-  const [isReversed, setIsReversed] = useState(false);
-  const [balanceA, setBalanceA] = useState("0");
-  const [balanceB, setBalanceB] = useState("0");
+  const [amount, setAmount] = useState<string>("0");
+  const [price, setPrice] = useState<string>("");
+  const [isReversed, setIsReversed] = useState<boolean>(false);
+  const [balanceA, setBalanceA] = useState<string>("0");
+  const [balanceB, setBalanceB] = useState<string>("0");
 
   useEffect(() => {
-    if (window.ethereum) {
-      const prov = new ethers.providers.Web3Provider(window.ethereum);
-      setProvider(prov);
-      const signer = prov.getSigner();
-      setSigner(signer);
-      signer.getAddress().then((addr: string) => {
+    const init = async () => {
+      if (window.ethereum) {
+        const prov = new ethers.providers.Web3Provider(window.ethereum);
+        setProvider(prov);
+        const signer = prov.getSigner();
+        setSigner(signer);
+        const addr = await signer.getAddress();
         setAccount(addr);
-        fetchBalances(prov, addr);
-      });
-    }
+        await fetchBalances(prov, addr);
+      }
+    };
+    init();
   }, []);
 
-  const fetchBalances = async (prov: any, addr: string) => {
+  const fetchBalances = async (prov: ethers.providers.Web3Provider, addr: string) => {
     const tokenA = new ethers.Contract(TOKEN_A_ADDRESS, abiERC20, prov);
     const tokenB = new ethers.Contract(TOKEN_B_ADDRESS, abiERC20, prov);
     const balA = await tokenA.balanceOf(addr);
@@ -49,15 +51,18 @@ export default function SimpleSwapApp() {
   };
 
   const getTokenPrice = async () => {
+    if (!provider) return;
     const contract = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, provider);
-    const price = await contract.getPrice(
+    const result = await contract.getPrice(
       isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS,
-      isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS,
+      isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS
     );
-    setPrice(ethers.utils.formatUnits(price, 18));
+    setPrice(ethers.utils.formatUnits(result, 18));
   };
 
   const swapTokens = async () => {
+    if (!signer || !provider || !account) return;
+
     const amountIn = ethers.utils.parseUnits(amount, 18);
     const deadline = Math.floor(Date.now() / 1000) + 600;
     const fromToken = isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS;
@@ -70,6 +75,7 @@ export default function SimpleSwapApp() {
     const swap = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, signer);
     const tx = await swap.swapExactTokensForTokens(amountIn, 0, [fromToken, toToken], account, deadline);
     await tx.wait();
+
     await fetchBalances(provider, account);
     alert("✅ Swap completed");
   };
