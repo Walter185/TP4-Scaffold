@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ethers } from "ethers";
+import ethers from "ethers";
 
 const SIMPLE_SWAP_ADDRESS = "0x37cd582b320b78c4B23d7d50eA2cB11426694dF9";
 const TOKEN_A_ADDRESS = "0x37C6B46eCA55cFD97D28707490bCE944911a33c3";

@@ -1,0 +1,6 @@
+packages/hardhat/coverage/
+packages/hardhat/coverage/lcov-report/
+node_modules
+dist
+.yarn
+.yarnrc.yml

@@ -62,5 +62,11 @@
     "ethers": "^5.7.2",
     "ethereumjs-abi": "0.6.8",
     "eth-sig-util/ethereumjs-abi": "0.6.8"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

@@ -1,0 +1,8 @@
+[build]
+  base = "packages/nextjs"
+  command = "yarn build"
+  publish = "packages/nextjs/.next"
+
+
+[functions]
+  directory = "netlify/functions"
