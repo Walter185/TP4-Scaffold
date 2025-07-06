@@ -1,102 +1,140 @@
-# 🦄 SimpleSwap DApp – EthKipu TP4
+# 📘 Proyecto TP4 - SimpleSwap & Tokens
 
-This project is a decentralized application (DApp) built as part of the EthKipu course – Module 3. It allows users to interact with a SimpleSwap smart contract deployed on the Sepolia testnet. Users can swap between two ERC20 tokens (TokenA and TokenB), view token prices, and connect their wallets using MetaMask.
-
----
-
-## 🌐 Live Demo
-
-👉 [Access the frontend (Vercel)](https://your-vercel-deployment.vercel.app)  
-👉 [Contract on Sepolia](https://sepolia.etherscan.io/address/0x37cd582b320b78c4B23d7d50eA2cB11426694dF9)
+**Autor:** Walter Liendo - Estudiante de EthKipu  
+**Red:** Sepolia  
+**Contratos Verificados:**  
+- Token A: [`0x06B27208fA66d387633EfBe628f02a15d6608A1F`](https://sepolia.etherscan.io/address/0x06B27208fA66d387633EfBe628f02a15d6608A1F)
+- Token B: [`0xeC6CDbB141aEc0C981c0E5e4a825227E412f7B99`](https://sepolia.etherscan.io/address/0xeC6CDbB141aEc0C981c0E5e4a825227E412f7B99)
+- SimpleSwap: [`0x3F5C540D9087f4C95Ca6264B65A170353d2Ab03D`](https://sepolia.etherscan.io/address/0x3F5C540D9087f4C95Ca6264B65A170353d2Ab03D)
 
 ---
 
-## 🧠 Features
+## 📦 Estructura del Proyecto
 
-- Swap **Token A → Token B** and vice versa
-- View token price via `getPrice(tokenA, tokenB)`
-- MetaMask wallet integration
-- Automatic approval of token before swapping
-- Minimal and responsive UI
-- Displays user token balances
-
----
-
-## 🚀 Technologies
-
-- Solidity (Smart Contract)
-- Hardhat + TypeScript
-- Ethers.js
-- React + Next.js (Scaffold-ETH 2)
-- TailwindCSS
-- Vercel (for deployment)
+```bash
+front/
+├── packages/
+│   ├── hardhat/           # Contratos y scripts de deploy
+│   └── nextjs/            # Frontend con Next.js
+├── .yarn/
+│   ├── releases/          # Yarn 3.x configurado con Corepack
+│   └── plugins/           # Plugins personalizados (TypeScript, Interactive Tools)
+├── .yarnrc.yml            # Configuración avanzada de Yarn
+├── package.json           # Workspaces y dependencias
+└── README.md              # Este archivo
+```
 
 ---
 
-## 📦 Contracts
+## 🚀 Instalación
 
-| Name        | Address                                    |
-|-------------|---------------------------------------------|
-| `TokenA`     | `0x37C6B46eCA55cFD97D28707490bCE944911a33c3` |
-| `TokenB`     | `0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613` |
-| `SimpleSwap` | `0x37cd582b320b78c4B23d7d50eA2cB11426694dF9` |
-
-Contracts were verified on [Sepolia Etherscan](https://sepolia.etherscan.io/).
-
----
-
-## 🛠 Installation
-
-Clone the repository and install dependencies:
+1. Clona el repositorio
 
 ```bash
 git clone https://github.com/Walter185/TP4-Scaffold.git
 cd TP4-Scaffold
-pnpm install
 ```
 
-Start local blockchain (optional):
+2. Asegúrate de tener `corepack` habilitado (viene con Node >= 16.9)
 
 ```bash
-cd packages/hardhat
-pnpm chain
-pnpm deploy
+corepack enable
+corepack prepare yarn@3.2.3 --activate
 ```
 
-Start frontend:
+3. Instala dependencias
 
 ```bash
-cd packages/nextjs
-pnpm dev
+yarn install
 ```
-
-Access at [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 🧪 Run Tests & Check Coverage
+## 🧪 Testing
+
+Desde la carpeta `packages/hardhat`:
 
 ```bash
 cd packages/hardhat
-pnpm test
-pnpm coverage
+yarn hardhat test
 ```
-
-✔️ Coverage achieved: **93.22%** (TP requirement ≥ 50%)
 
 ---
 
-## 📤 Deploy Frontend
+## 📜 Descripción de los Contratos
 
-We use [Vercel](https://vercel.com/) to deploy the frontend.
+### 🪙 TokenA y TokenB
 
-Steps:
+- ERC20 sin comisiones
+- Función `mint` accesible solo por el owner
+- Usados para swap 1:1 dentro del contrato `SimpleSwap`
 
-1. Push the project to GitHub
-2. Go to [vercel.com](https://vercel.com/)
-3. Import your GitHub repo
-4. Set framework to **Next.js**
-5. Deploy
+### 🔄 SimpleSwap
+
+- Swap 1:1 entre dos tokens compatibles
+- Función `addLiquidity`, `removeLiquidity`
+- Función `getPrice` y `getAmountOut`
+- Cálculo con reserva y sin comisiones
+
+---
+
+## 🖼 Frontend
+
+- Con Next.js + ethers.js
+- Interfaz simple tipo Scaffold-eth
+- Conecta con MetaMask
+- Permite:
+  - Hacer swap
+  - Ver precios
+  - Añadir/quitar liquidez
+  - Visualizar balances
+
+---
+
+## 🔍 Scripts Útiles
+
+### Verificación del contrato
+
+```bash
+npx hardhat verify --network sepolia <CONTRACT_ADDRESS> <constructor_args...>
+```
+
+Asegúrate de tener configurado `.env` con:
+
+```
+ETHERSCAN_API_KEY=tu_api_key
+```
+
+---
+
+## ✅ Requisitos cumplidos del TP4
+
+- ✅ Contratos verificados
+- ✅ Frontend funcional
+- ✅ Funciones completas (`swap`, `getPrice`, `getAmountOut`, `liquidez`)
+- ✅ Tests con cobertura ≥ 50%
+- ✅ Proyecto en GitHub
+- ✅ Desplegado en Vercel
+
+---
+
+## 🛠 Tecnologías
+
+- Solidity 0.8.20
+- Hardhat con hardhat-deploy
+- Next.js + React + ethers.js
+- Yarn 3.2.3 con Corepack
+- Vercel para deploy
+- Sepolia como red de pruebas
+
+---
+
+## 🧠 Lecciones aprendidas
+
+- Uso de Uniswap V2 como referencia
+- Gestión de workspaces con Yarn
+- Deploy y verificación de contratos en Sepolia
+- Debugging con Vercel y Corepack
 
 ---
 
@@ -113,10 +151,4 @@ Special thanks to:
 
 **Walter Liendo**  
 EthKipu Blockchain Developer – 2025  
-Argentina 🇦🇷 | Uruguay 🇺🇾
-
----
-
-## 📘 License
-
-This project is MIT licensed.
+Argentina 🇦🇷
