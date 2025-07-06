@@ -58,7 +58,6 @@
     "node": ">=20.18.3"
   },
   "resolutions": {
-    "ethereumjs-abi": "npm:ethereumjs-abi@0.6.8",
     "ethers": "^5.7.2"
   }
 }
