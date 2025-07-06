@@ -1,11 +1,9 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { ethers } from "hardhat";
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts } = hre;
-  const { deployer } = await getNamedAccounts();
+const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { get } = deployments;
+  const { deployer } = await getNamedAccounts();
 
   const signer = await ethers.getSigner(deployer);
 
@@ -17,24 +15,24 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const tokenB = await ethers.getContractAt("TokenB", tokenBDeployment.address, signer);
   const simpleSwap = await ethers.getContractAt("SimpleSwap", swapDeployment.address, signer);
 
-  const amountA = ethers.parseUnits("1000", 18);
-  const amountB = ethers.parseUnits("1000", 18);
-  const amountAMin = ethers.parseUnits("900", 18);
-  const amountBMin = ethers.parseUnits("900", 18);
-  const deadline = Math.floor(Date.now() / 1000) + 60 * 10; // 10 minutos
+  const amountA = ethers.utils.parseUnits("1000", 18);
+  const amountB = ethers.utils.parseUnits("1000", 18);
+  const amountAMin = ethers.utils.parseUnits("900", 18);
+  const amountBMin = ethers.utils.parseUnits("900", 18);
+  const deadline = Math.floor(Date.now() / 1000) + 600;
 
-  console.log(`Minting tokens to ${deployer}...`);
+  console.log("Minting tokens...");
   await tokenA.mint(deployer, amountA);
   await tokenB.mint(deployer, amountB);
 
-  console.log("Approving tokens...");
-  await tokenA.approve(simpleSwap.target, amountA);
-  await tokenB.approve(simpleSwap.target, amountB);
+  console.log("Approving...");
+  await tokenA.approve(simpleSwap.address, amountA);
+  await tokenB.approve(simpleSwap.address, amountB);
 
   console.log("Adding liquidity...");
   const tx = await simpleSwap.addLiquidity(
-    tokenADeployment.address,
-    tokenBDeployment.address,
+    tokenA.address,
+    tokenB.address,
     amountA,
     amountB,
     amountAMin,
@@ -44,7 +42,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   );
   await tx.wait();
 
-  console.log("✅ Liquidity added!");
+  console.log("✅ Liquidez añadida");
 };
 
 export default func;

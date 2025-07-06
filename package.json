@@ -50,6 +50,7 @@
     "verify": "yarn hardhat:verify"
   },
   "devDependencies": {
+    "@ethereumjs/util": "8.0.1",
     "husky": "~9.1.6",
     "lint-staged": "~13.2.2"
   },

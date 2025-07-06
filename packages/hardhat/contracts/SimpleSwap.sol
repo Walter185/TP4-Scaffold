@@ -11,6 +11,8 @@ contract SimpleSwap is ERC20 {
     uint public reserveA;
     uint public reserveB;
 
+    event LiquidityAdded(uint amountA, uint amountB, uint liquidity);
+
     constructor(address _tokenA, address _tokenB) ERC20("SimpleSwapLiquidityToken", "SSLT") {
         tokenA = _tokenA;
         tokenB = _tokenB;
@@ -42,6 +44,8 @@ contract SimpleSwap is ERC20 {
 
         reserveA += amountA;
         reserveB += amountB;
+
+        emit LiquidityAdded(amountA, amountB, liquidity);
     }
 
     function removeLiquidity(
