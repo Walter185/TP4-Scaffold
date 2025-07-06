@@ -1,5 +1,5 @@
 # 🏗 Scaffold-ETH 2
-npx hardhat verify --network sepolia 0x6a0df71390A215119654Be497207583Cb1b3D0fB 0x37C6B46eCA55cFD97D28707490bCE944911a33c3 0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613
+npx hardhat verify --network sepolia 0x37cd582b320b78c4B23d7d50eA2cB11426694dF9 0x37C6B46eCA55cFD97D28707490bCE944911a33c3 0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613
 
 <h4 align="center">
   <a href="https://docs.scaffoldeth.io">Documentation</a> |

@@ -1,89 +1,145 @@
+import { ethers } from "hardhat";
 import { expect } from "chai";
-import { ethers, deployments, getNamedAccounts } from "hardhat";
 import { Contract } from "ethers";
 
-describe("SimpleSwap", function () {
+describe("SimpleSwap", () => {
   let tokenA: Contract;
   let tokenB: Contract;
   let simpleSwap: Contract;
-  let deployer: string;
+  let owner: any;
+  let user: any;
 
-  beforeEach(async function () {
-    await deployments.fixture(); // Ejecuta todos los deploys
+  beforeEach(async () => {
+    [owner, user] = await ethers.getSigners();
 
-    const { deployer: deployerAddr } = await getNamedAccounts();
-    deployer = deployerAddr;
+    const TokenA = await ethers.getContractFactory("TokenA");
+    const TokenB = await ethers.getContractFactory("TokenB");
+    const SimpleSwap = await ethers.getContractFactory("SimpleSwap");
 
-    tokenA = await ethers.getContractAt("TokenA", (await deployments.get("TokenA")).address);
-    tokenB = await ethers.getContractAt("TokenB", (await deployments.get("TokenB")).address);
-    simpleSwap = await ethers.getContractAt("SimpleSwap", (await deployments.get("SimpleSwap")).address);
+    tokenA = await TokenA.deploy(owner.address);
+    tokenB = await TokenB.deploy(owner.address);
 
-    const amount = ethers.utils.parseEther("1000");
+    await tokenA.mint(owner.address, ethers.utils.parseEther("1000"));
+    await tokenB.mint(owner.address, ethers.utils.parseEther("1000"));
 
-    await tokenA.mint(deployer, amount);
-    await tokenB.mint(deployer, amount);
+    simpleSwap = await SimpleSwap.deploy(tokenA.address, tokenB.address);
 
-    await tokenA.approve(simpleSwap.address, amount);
-    await tokenB.approve(simpleSwap.address, amount);
+    // Aprobar el contrato para transferencias
+    await tokenA.approve(simpleSwap.address, ethers.utils.parseEther("500"));
+    await tokenB.approve(simpleSwap.address, ethers.utils.parseEther("500"));
   });
 
-  it("should add liquidity", async function () {
-    const amountA = ethers.utils.parseEther("100");
-    const amountB = ethers.utils.parseEther("100");
-    const amountAMin = ethers.utils.parseEther("90");
-    const amountBMin = ethers.utils.parseEther("90");
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 10;
+  it("should add liquidity", async () => {
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp + 1000;
 
-    await expect(
-      simpleSwap.addLiquidity(
-        tokenA.address,
-        tokenB.address,
-        amountA,
-        amountB,
-        amountAMin,
-        amountBMin,
-        deployer,
-        deadline,
-      ),
-    ).to.emit(simpleSwap, "LiquidityAdded");
+    const tx = await simpleSwap.addLiquidity(
+      tokenA.address,
+      tokenB.address,
+      ethers.utils.parseEther("100"),
+      ethers.utils.parseEther("100"),
+      0,
+      0,
+      owner.address,
+      deadline,
+    );
+    await tx.wait();
+
+    const balance = await simpleSwap.balanceOf(owner.address);
+    expect(balance).to.be.gt(0);
 
     const reserves = await simpleSwap.getReserves();
-    expect(reserves[0]).to.equal(amountA);
-    expect(reserves[1]).to.equal(amountB);
+    expect(reserves[0]).to.equal(ethers.utils.parseEther("100"));
+    expect(reserves[1]).to.equal(ethers.utils.parseEther("100"));
   });
 
-  it("should swap tokenA for tokenB", async function () {
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 10;
-    const amountA = ethers.utils.parseEther("100");
-    const amountB = ethers.utils.parseEther("100");
+  it("should swap tokenA for tokenB", async () => {
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp + 1000;
 
-    // Agrega liquidez
+    // Añadir liquidez primero
     await simpleSwap.addLiquidity(
       tokenA.address,
       tokenB.address,
-      amountA,
-      amountB,
-      ethers.utils.parseEther("90"),
-      ethers.utils.parseEther("90"),
-      deployer,
+      ethers.utils.parseEther("100"),
+      ethers.utils.parseEther("100"),
+      0,
+      0,
+      owner.address,
       deadline,
     );
 
-    // Muestra balances iniciales
-    const initialB = await tokenB.balanceOf(deployer);
+    // Transferir tokens a user y aprobar
+    await tokenA.transfer(user.address, ethers.utils.parseEther("10"));
+    await tokenA.connect(user).approve(simpleSwap.address, ethers.utils.parseEther("10"));
 
-    // Swapea
-    await tokenA.approve(simpleSwap.address, ethers.utils.parseEther("10"));
-    await simpleSwap.swapExactTokensForTokens(
+    const path = [tokenA.address, tokenB.address];
+    await simpleSwap
+      .connect(user)
+      .swapExactTokensForTokens(ethers.utils.parseEther("5"), 0, path, user.address, deadline);
+
+    const userBalanceB = await tokenB.balanceOf(user.address);
+    expect(userBalanceB).to.be.gt(0);
+  });
+
+  it("should fail to swap with expired deadline", async () => {
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp - 1;
+
+    const path = [tokenA.address, tokenB.address];
+
+    await expect(
+      simpleSwap.swapExactTokensForTokens(ethers.utils.parseEther("1"), 0, path, owner.address, deadline),
+    ).to.be.revertedWith("Deadline expired");
+  });
+
+  it("should remove liquidity", async () => {
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp + 1000;
+
+    await simpleSwap.addLiquidity(
       tokenA.address,
       tokenB.address,
-      ethers.utils.parseEther("10"),
-      ethers.utils.parseEther("8"),
-      deployer,
+      ethers.utils.parseEther("100"),
+      ethers.utils.parseEther("100"),
+      0,
+      0,
+      owner.address,
       deadline,
     );
 
-    const finalB = await tokenB.balanceOf(deployer);
-    expect(finalB).to.be.gt(initialB);
+    const liquidity = await simpleSwap.balanceOf(owner.address);
+
+    await tokenA.approve(simpleSwap.address, ethers.utils.parseEther("1000"));
+    await tokenB.approve(simpleSwap.address, ethers.utils.parseEther("1000"));
+    await simpleSwap.approve(simpleSwap.address, liquidity);
+
+    const tx = await simpleSwap.removeLiquidity(
+      tokenA.address,
+      tokenB.address,
+      liquidity,
+      0,
+      0,
+      owner.address,
+      deadline,
+    );
+    await tx.wait();
+
+    const remaining = await simpleSwap.balanceOf(owner.address);
+    expect(remaining).to.equal(0);
+  });
+
+  it("should return correct price", async () => {
+    const deadline = (await ethers.provider.getBlock("latest")).timestamp + 1000;
+
+    await simpleSwap.addLiquidity(
+      tokenA.address,
+      tokenB.address,
+      ethers.utils.parseEther("100"),
+      ethers.utils.parseEther("50"),
+      0,
+      0,
+      owner.address,
+      deadline,
+    );
+
+    const price = await simpleSwap.getPrice(tokenA.address, tokenB.address);
+    expect(price).to.be.gt(0);
   });
 });
