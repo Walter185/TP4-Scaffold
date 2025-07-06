@@ -1,81 +1,122 @@
-# 🏗 Scaffold-ETH 2
-npx hardhat verify --network sepolia 0x37cd582b320b78c4B23d7d50eA2cB11426694dF9 0x37C6B46eCA55cFD97D28707490bCE944911a33c3 0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613
+# 🦄 SimpleSwap DApp – EthKipu TP4
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+This project is a decentralized application (DApp) built as part of the EthKipu course – Module 3. It allows users to interact with a SimpleSwap smart contract deployed on the Sepolia testnet. Users can swap between two ERC20 tokens (TokenA and TokenB), view token prices, and connect their wallets using MetaMask.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+---
 
-⚙️ Built using NextJS, RainbowKit, Hardhat, Wagmi, Viem, and Typescript.
+## 🌐 Live Demo
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+👉 [Access the frontend (Vercel)](https://your-vercel-deployment.vercel.app)  
+👉 [Contract on Sepolia](https://sepolia.etherscan.io/address/0x37cd582b320b78c4B23d7d50eA2cB11426694dF9)
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+---
 
-## Requirements
+## 🧠 Features
 
-Before you begin, you need to install the following tools:
+- Swap **Token A → Token B** and vice versa
+- View token price via `getPrice(tokenA, tokenB)`
+- MetaMask wallet integration
+- Automatic approval of token before swapping
+- Minimal and responsive UI
+- Displays user token balances
 
-- [Node (>= v20.18.3)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+---
 
-## Quickstart
+## 🚀 Technologies
 
-To get started with Scaffold-ETH 2, follow the steps below:
+- Solidity (Smart Contract)
+- Hardhat + TypeScript
+- Ethers.js
+- React + Next.js (Scaffold-ETH 2)
+- TailwindCSS
+- Vercel (for deployment)
 
-1. Install dependencies if it was skipped in CLI:
+---
 
-```
-cd my-dapp-example
-yarn install
-```
+## 📦 Contracts
 
-2. Run a local network in the first terminal:
+| Name        | Address                                    |
+|-------------|---------------------------------------------|
+| `TokenA`     | `0x37C6B46eCA55cFD97D28707490bCE944911a33c3` |
+| `TokenB`     | `0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613` |
+| `SimpleSwap` | `0x37cd582b320b78c4B23d7d50eA2cB11426694dF9` |
 
-```
-yarn chain
-```
+Contracts were verified on [Sepolia Etherscan](https://sepolia.etherscan.io/).
 
-This command starts a local Ethereum network using Hardhat. The network runs on your local machine and can be used for testing and development. You can customize the network configuration in `packages/hardhat/hardhat.config.ts`.
+---
 
-3. On a second terminal, deploy the test contract:
+## 🛠 Installation
 
-```
-yarn deploy
-```
+Clone the repository and install dependencies:
 
-This command deploys a test smart contract to the local network. The contract is located in `packages/hardhat/contracts` and can be modified to suit your needs. The `yarn deploy` command uses the deploy script located in `packages/hardhat/deploy` to deploy the contract to the network. You can also customize the deploy script.
-
-4. On a third terminal, start your NextJS app:
-
-```
-yarn start
+```bash
+git clone https://github.com/your-username/simpleswap-dapp.git
+cd simpleswap-dapp
+pnpm install
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+Start local blockchain (optional):
 
-Run smart contract test with `yarn hardhat:test`
+```bash
+cd packages/hardhat
+pnpm chain
+pnpm deploy
+```
 
-- Edit your smart contracts in `packages/hardhat/contracts`
-- Edit your frontend homepage at `packages/nextjs/app/page.tsx`. For guidance on [routing](https://nextjs.org/docs/app/building-your-application/routing/defining-routes) and configuring [pages/layouts](https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts) checkout the Next.js documentation.
-- Edit your deployment scripts in `packages/hardhat/deploy`
+Start frontend:
 
+```bash
+cd packages/nextjs
+pnpm dev
+```
 
-## Documentation
+Access at [http://localhost:3000](http://localhost:3000)
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn how to start building with Scaffold-ETH 2.
+---
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+## 🧪 Run Tests & Check Coverage
 
-## Contributing to Scaffold-ETH 2
+```bash
+cd packages/hardhat
+pnpm test
+pnpm coverage
+```
 
-We welcome contributions to Scaffold-ETH 2!
+✔️ Coverage achieved: **93.22%** (TP requirement ≥ 50%)
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+---
+
+## 📤 Deploy Frontend
+
+We use [Vercel](https://vercel.com/) to deploy the frontend.
+
+Steps:
+
+1. Push the project to GitHub
+2. Go to [vercel.com](https://vercel.com/)
+3. Import your GitHub repo
+4. Set framework to **Next.js**
+5. Deploy
+
+---
+
+## 🙌 Acknowledgements
+
+Special thanks to:
+
+- **Cris** – for the clarity and Solidity guidance  
+- **Juan David** – for the support and feedback throughout the course
+
+---
+
+## 👨‍💻 Author
+
+**Walter Liendo**  
+EthKipu Blockchain Developer – 2025  
+Argentina 🇦🇷 | Uruguay 🇺🇾
+
+---
+
+## 📘 License
+
+This project is MIT licensed.
