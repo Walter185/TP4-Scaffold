@@ -55,7 +55,7 @@ export default function SimpleSwapApp() {
     const contract = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, provider);
     const result = await contract.getPrice(
       isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS,
-      isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS
+      isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS,
     );
     setPrice(ethers.utils.formatUnits(result, 18));
   };
