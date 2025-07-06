@@ -50,8 +50,8 @@ Contracts were verified on [Sepolia Etherscan](https://sepolia.etherscan.io/).
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/simpleswap-dapp.git
-cd simpleswap-dapp
+git clone https://github.com/Walter185/TP4-Scaffold.git
+cd TP4-Scaffold
 pnpm install
 ```
 
