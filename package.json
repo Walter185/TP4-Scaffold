@@ -33,7 +33,6 @@
     "hardhat:lint-staged": "yarn workspace @se-2/hardhat lint-staged",
     "hardhat:test": "yarn workspace @se-2/hardhat test",
     "hardhat:verify": "yarn workspace @se-2/hardhat verify",
-    "postinstall": "husky install",
     "ipfs": "yarn workspace @se-2/nextjs ipfs",
     "lint": "yarn next:lint && yarn hardhat:lint",
     "next:build": "yarn workspace @se-2/nextjs build",
@@ -50,8 +49,7 @@
     "verify": "yarn hardhat:verify"
   },
   "devDependencies": {
-    "@ethereumjs/util": "8.0.1",
-    "lint-staged": "~13.2.2"
+    "@ethereumjs/util": "8.0.1"
   },
   "packageManager": "yarn@3.2.3",
   "engines": {
