@@ -1,14 +1,10 @@
-import "@nomicfoundation/hardhat-verify";
-import * as dotenv from "dotenv";
-dotenv.config();
-
 import { HardhatUserConfig } from "hardhat/config";
-import "@nomiclabs/hardhat-waffle";
-import "@nomiclabs/hardhat-ethers";
+import * as dotenv from "dotenv";
 import "hardhat-deploy";
-import "solidity-coverage";
-import "hardhat-gas-reporter";
-import "@typechain/hardhat";
+import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-ethers";
+
+dotenv.config();
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "";
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "";
@@ -26,7 +22,11 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: "hardhat",
   networks: {
-    hardhat: {},
+    hardhat: {
+      allowUnlimitedContractSize: true,
+      gas: 30_000_000,
+      blockGasLimit: 30_000_000,
+    },
     sepolia: {
       url: SEPOLIA_RPC_URL,
       accounts: [PRIVATE_KEY],
