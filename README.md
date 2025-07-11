@@ -2,9 +2,9 @@
 
 This project implements a decentralized exchange (DEX) similar to Uniswap V2, written in Solidity and powered by React and Scaffold-ETH for the frontend.
 
-## 🖼️ Interfaz de la DApp
+## 🖼️ DApp Interface
 
-![Vista previa de la DApp](./proyecto.jpg)
+![DApp Interface Preview](./proyecto.jpg)
 
 ---
 
