@@ -1,94 +1,124 @@
-# SimpleSwap DApp – Scaffold-ETH Integration
+# 🦄 SimpleSwap DEX
 
-This is a decentralized token swap application built using **Hardhat**, **TypeScript**, and **Scaffold-ETH**. The project implements a custom `SimpleSwap` smart contract inspired by Uniswap V2, featuring add/remove liquidity and token swap functionalities.
+This project implements a decentralized exchange (DEX) similar to Uniswap V2, written in Solidity and powered by React and Scaffold-ETH for the frontend.
 
-## 🧱 Smart Contracts
+## 📦 Contracts Deployed on Sepolia
 
-Deployed to the **Sepolia** testnet:
+- **TokenA**: [0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28](https://sepolia.etherscan.io/address/0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28)
+- **TokenB**: [0x9167460d361769a62A447847EEecE91Df135d8f6](https://sepolia.etherscan.io/address/0x9167460d361769a62A447847EEecE91Df135d8f6)
+- **SimpleSwap**: [0xBF24790A19EB7b52944bC0a514bc9848a4C56387](https://sepolia.etherscan.io/address/0xBF24790A19EB7b52944bC0a514bc9848a4C56387)
 
-- **TokenA**: [`0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28`](https://sepolia.etherscan.io/address/0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28)
-- **TokenB**: [`0x9167460d361769a62A447847EEecE91Df135d8f6`](https://sepolia.etherscan.io/address/0x9167460d361769a62A447847EEecE91Df135d8f6)
-- **SimpleSwap**: [`0xBF24790A19EB7b52944bC0a514bc9848a4C56387`](https://sepolia.etherscan.io/address/0xBF24790A19EB7b52944bC0a514bc9848a4C56387)
+## 🚀 Functionality
 
-## 🧪 Features
+### ✅ Smart Contract Features
 
-- ✅ Add/remove liquidity with slippage protection and LP token minting
-- 🔁 Swap token A ↔ token B using constant product formula
-- 📈 Price estimation and output calculation
-- 🔬 Full frontend integration via Scaffold-ETH with Ethers.js
-- 🧪 Unit testing and test coverage with Hardhat and solidity-coverage
-- 🧩 Verified contracts on Etherscan
+- **Liquidity Management**
+  - `addLiquidity`
+  - `removeLiquidity`
+- **Swapping**
+  - `swapExactTokensForTokens`
+- **Price and Estimation**
+  - `getPrice`
+  - `getAmountOut`
+- **Math Utils**
+  - `sqrt`
 
-## 📂 Project Structure
+### 🧪 Testing
 
-```
+Unit tests written in TypeScript using Hardhat and Chai cover core functions:
+
+- ✅ Add Liquidity
+- ✅ Remove Liquidity
+- ✅ Token Swap
+- ✅ Expired Deadlines
+- ✅ Price Query
+
+Coverage achieved:
+
+Statements: 97.37%
+Branches: 50.00%
+Functions: 100.00%
+Lines: 93.22%
+
+> ✅ All values meet EthKipu's minimum requirement of **≥ 50%**
+
+### 📁 Folder Structure
+
 packages/
-├── hardhat/         # Smart contracts and deploy scripts
-└── nextjs/          # Scaffold-ETH frontend
-```
+├── hardhat/
+│ ├── contracts/
+│ │ ├── SimpleSwap.sol
+│ │ ├── TokenA.sol
+│ │ └── TokenB.sol
+│ ├── deploy/
+│ │ ├── 00_deploy.ts
+│ │ └── 03_add_liquidity.ts
+│ ├── test/
+│ │ └── SimpleSwap.test.ts
+│ └── hardhat.config.ts
+├── nextjs/
+│ └── (React + Scaffold-ETH frontend)
 
-## ⚙️ Commands
 
-### Compile Contracts
+## 🖼️ Frontend Features
 
-```
-yarn hardhat compile
-```
+- Wallet connection (MetaMask)
+- Swap UI with token selection
+- Liquidity pool status
+- Real-time price display
+- Token faucet available to test transactions
+- Uses `wagmi`, `viem`, and `rainbowkit` for connection and transactions
 
-### Deploy to Sepolia
+## 🧪 Deployment & Verification
 
-```
+**Deployment command:**
+
+```bash
 yarn hardhat deploy --network sepolia
-```
 
-### Verify Contracts
+Contract verification:
 
-```
-yarn hardhat verify --network sepolia <address> <constructor_args>
-```
+yarn hardhat verify --network sepolia <contract_address> <constructor_args>
 
-### Run Tests
+📽️ Demonstration
+If you choose to submit a video instead of a deployed frontend, make sure to:
 
-```
-yarn hardhat test
-```
+✅ Show approve call from frontend
 
-### Run Coverage
+✅ Use getAmountOut or getPrice
 
-```
-npx hardhat coverage
-```
+✅ Perform a successful transaction and verify it on Sepolia Etherscan
 
-### Generate Frontend Types
+🧠 NatSpec & Audit Readiness
+All contracts are documented using Solidity NatSpec, including:
 
-```
-yarn generate
-```
+All public and external functions
 
-## 🌐 Frontend
+Events with full parameter descriptions
 
-- Scaffold-ETH v2 based UI
-- Network-aware: Sepolia integration
-- Debug Contracts tab (auto-generated from deployments)
-- Burner wallet for local testing
+State variables and modifiers
 
-## ✅ Requirements Met (TP4 - EthKipu)
+🏁 Getting Started
 
-- [x] Frontend working with deployed SimpleSwap
-- [x] Contracts verified on Sepolia
-- [x] Tests written and executed
-- [x] Scaffold-ETH UI integration
-- [x] Project hosted on GitHub
+cd packages/hardhat
+cp .env.example .env
+yarn install
+yarn deploy --network sepolia
 
-## 🙏 Acknowledgements
+cd packages/nextjs
+cp .env.example .env.local
+yarn install
+yarn dev
 
-Special thanks to:
+🙌 Acknowledgements
+Scaffold-ETH 2
 
-- **EthKipu** instructors and community
-- **Scaffold-ETH** team for the open-source framework
-- **OpenZeppelin** for secure ERC20 implementations
-- **Hardhat** for powerful tooling
+OpenZeppelin Contracts
 
----
+Hardhat
 
-Made with 💙 by **Walter Liendo – EthKipu Student**
+Viem
+
+EthKipu
+
+👨‍🎓 Developed by Walter Liendo – Student at EthKipu

@@ -97,11 +97,16 @@ export default function SimpleSwapApp() {
           </p>
         )}
       </div>
-
-      <div className="text-center mb-4">
-        <p>💰 Balance A: {balanceA}</p>
-        <p>💰 Balance B: {balanceB}</p>
-      </div>
+      {account ? (
+        <div className="text-center mb-4">
+          <p>💰 Balance A: {balanceA}</p>
+          <p>💰 Balance B: {balanceB}</p>
+        </div>
+      ) : (
+        <p className="text-center bg-red-600 text-white font-bold px-4 py-2 rounded animate-pulse">
+          ⚠️ Please connect to MetaMask to view your token balances ⚠️
+        </p>
+      )}
 
       <div className="mb-4 flex justify-center">
         <input
