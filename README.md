@@ -2,6 +2,10 @@
 
 This project implements a decentralized exchange (DEX) similar to Uniswap V2, written in Solidity and powered by React and Scaffold-ETH for the frontend.
 
+## 🖼️ Interfaz de la DApp
+
+![Vista previa de la DApp](./proyecto.jpg)
+
 ---
 
 ## 📦 Contracts Deployed on Sepolia
@@ -57,7 +61,9 @@ packages/
 │   │   ├── TokenA.sol
 │   │   └── TokenB.sol
 │   ├── deploy/
-│   │   ├── 00_deploy.ts
+│   │   ├── 00_deploy_tokenA.ts
+|   |   ├── 01_deploy_tokenB.ts
+|   |   ├── 02_deploy_simpleSwap.ts
 │   │   └── 03_add_liquidity.ts
 │   ├── test/
 │   │   └── SimpleSwap.test.ts

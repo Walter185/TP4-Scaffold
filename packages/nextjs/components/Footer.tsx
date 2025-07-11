@@ -58,7 +58,7 @@ export const Footer = () => {
               </p>
               <a
                 className="flex justify-center items-center gap-1"
-                href="https://buidlguidl.com/"
+                href="https://github.com/Walter185"
                 target="_blank"
                 rel="noreferrer"
               >
