@@ -1,24 +1,20 @@
-import "@rainbow-me/rainbowkit/styles.css";
-import { ScaffoldEthAppWithProviders } from "~~/components/ScaffoldEthAppWithProviders";
-import { ThemeProvider } from "~~/components/ThemeProvider";
+// app/layout.tsx
+import ClientOnly from "~~/components/ClientOnly";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 export const metadata = getMetadata({
-  title: "Scaffold-ETH 2 App",
-  description: "Built with 🏗 Scaffold-ETH 2",
+  title: "EthKipu SimpleSwap",
+  description: "Front‑end for SimpleSwap",
 });
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning>
       <body>
-        <ThemeProvider enableSystem>
-          <ScaffoldEthAppWithProviders>{children}</ScaffoldEthAppWithProviders>
-        </ThemeProvider>
+        {/* Esto es un Server Component, aquí NO ponemos imports de web3 ni dynamic(ssr:false) */}
+        <ClientOnly>{children}</ClientOnly>
       </body>
     </html>
   );
-};
-
-export default ScaffoldEthApp;
+}
