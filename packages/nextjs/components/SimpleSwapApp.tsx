@@ -1,125 +1,189 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 
-const SIMPLE_SWAP_ADDRESS = "0x37cd582b320b78c4B23d7d50eA2cB11426694dF9";
-const TOKEN_A_ADDRESS = "0x37C6B46eCA55cFD97D28707490bCE944911a33c3";
-const TOKEN_B_ADDRESS = "0x4c06E3BdDF0e87f993287A5744Bc63Fc1282e613";
+const SIMPLE_SWAP_ADDRESS = process.env.NEXT_PUBLIC_SWAP_ADDRESS!;
+const TOKEN_A_ADDRESS = process.env.NEXT_PUBLIC_TOKENA_ADDRESS!;
+const TOKEN_B_ADDRESS = process.env.NEXT_PUBLIC_TOKENB_ADDRESS!;
 
 const abiSimpleSwap = [
   "function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external",
-  "function getPrice(address _tokenA, address _tokenB) external view returns (uint)",
+  "function getPrice(address _tokenA, address _tokenB) external view returns (uint)"
 ];
 
 const abiERC20 = [
   "function approve(address spender, uint amount) external returns (bool)",
   "function balanceOf(address account) external view returns (uint)",
-  "function decimals() view returns (uint8)",
+  "function decimals() view returns (uint8)"
 ];
 
 export default function SimpleSwapApp() {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | null>(null);
   const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [account, setAccount] = useState<string>("");
-  const [amount, setAmount] = useState<string>("0");
+
+  const [amount, setAmount] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [isReversed, setIsReversed] = useState<boolean>(false);
   const [balanceA, setBalanceA] = useState<string>("0");
   const [balanceB, setBalanceB] = useState<string>("0");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Initialize provider and signer
   useEffect(() => {
-    const init = async () => {
-      if (window.ethereum) {
-        const prov = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(prov);
-        const signer = prov.getSigner();
-        setSigner(signer);
-        const addr = await signer.getAddress();
-        setAccount(addr);
-        await fetchBalances(prov, addr);
-      }
-    };
-    init();
+    if (window.ethereum) {
+      const prov = new ethers.providers.Web3Provider(window.ethereum);
+      setProvider(prov);
+      prov.send("eth_requestAccounts", []).then(() => {
+        const s = prov.getSigner();
+        setSigner(s);
+        s.getAddress().then((addr) => setAccount(addr));
+      });
+    }
   }, []);
 
-  const fetchBalances = async (prov: ethers.providers.Web3Provider, addr: string) => {
-    const tokenA = new ethers.Contract(TOKEN_A_ADDRESS, abiERC20, prov);
-    const tokenB = new ethers.Contract(TOKEN_B_ADDRESS, abiERC20, prov);
-    const balA = await tokenA.balanceOf(addr);
-    const balB = await tokenB.balanceOf(addr);
-    setBalanceA(ethers.utils.formatUnits(balA, 18));
-    setBalanceB(ethers.utils.formatUnits(balB, 18));
-  };
+  // Fetch balances
+  useEffect(() => {
+    const fetchBalances = async () => {
+      if (!provider || !account) return;
+      try {
+        const tokenA = new ethers.Contract(TOKEN_A_ADDRESS, abiERC20, provider);
+        const tokenB = new ethers.Contract(TOKEN_B_ADDRESS, abiERC20, provider);
+        const [rawA, rawB] = await Promise.all([
+          tokenA.balanceOf(account),
+          tokenB.balanceOf(account)
+        ]);
+        const dec = await tokenA.decimals();
+        setBalanceA(ethers.utils.formatUnits(rawA, dec));
+        setBalanceB(ethers.utils.formatUnits(rawB, dec));
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    fetchBalances();
+  }, [provider, account]);
 
   const getTokenPrice = async () => {
     if (!provider) return;
-    const contract = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, provider);
-    const result = await contract.getPrice(
-      isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS,
-      isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS,
-    );
-    setPrice(ethers.utils.formatUnits(result, 18));
+    try {
+      const swap = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, provider);
+      const result = await swap.getPrice(
+        isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS,
+        isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS
+      );
+      setPrice(ethers.utils.formatUnits(result, 18));
+    } catch (e) {
+      console.error(e);
+      setError("Failed to fetch price");
+    }
   };
 
   const swapTokens = async () => {
-    if (!signer || !provider || !account) return;
+    if (!signer || !amount) return;
+    setError(null);
+    setLoading(true);
+    try {
+      const amt = ethers.utils.parseUnits(amount, 18);
+      // Approve
+      const tokenContract = new ethers.Contract(
+        isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS,
+        abiERC20,
+        signer
+      );
+      await (await tokenContract.approve(SIMPLE_SWAP_ADDRESS, amt)).wait();
 
-    const amountIn = ethers.utils.parseUnits(amount, 18);
-    const deadline = Math.floor(Date.now() / 1000) + 600;
-    const fromToken = isReversed ? TOKEN_B_ADDRESS : TOKEN_A_ADDRESS;
-    const toToken = isReversed ? TOKEN_A_ADDRESS : TOKEN_B_ADDRESS;
+      // Swap
+      const swap = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, signer);
+      const deadline = Math.floor(Date.now() / 1000) + 600;
+      await (await swap.swapExactTokensForTokens(
+        amt,
+        0,
+        isReversed
+          ? [TOKEN_B_ADDRESS, TOKEN_A_ADDRESS]
+          : [TOKEN_A_ADDRESS, TOKEN_B_ADDRESS],
+        account,
+        deadline
+      )).wait();
 
-    const tokenContract = new ethers.Contract(fromToken, abiERC20, signer);
-    const approveTx = await tokenContract.approve(SIMPLE_SWAP_ADDRESS, amountIn);
-    await approveTx.wait();
+      // Refresh balances
+      const tokenA = new ethers.Contract(TOKEN_A_ADDRESS, abiERC20, provider!);
+      const tokenB = new ethers.Contract(TOKEN_B_ADDRESS, abiERC20, provider!);
+      const [rawA, rawB] = await Promise.all([
+        tokenA.balanceOf(account),
+        tokenB.balanceOf(account)
+      ]);
+      const dec = await tokenA.decimals();
+      setBalanceA(ethers.utils.formatUnits(rawA, dec));
+      setBalanceB(ethers.utils.formatUnits(rawB, dec));
 
-    const swap = new ethers.Contract(SIMPLE_SWAP_ADDRESS, abiSimpleSwap, signer);
-    const tx = await swap.swapExactTokensForTokens(amountIn, 0, [fromToken, toToken], account, deadline);
-    await tx.wait();
-
-    await fetchBalances(provider, account);
-    alert("✅ Swap completed");
+      setAmount("");
+    } catch (e) {
+      console.error(e);
+      setError("Swap failed");
+    }
+    setLoading(false);
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4 text-center">DApp - SimpleSwap Front-End</h2>
+    <div className="max-w-md mx-auto bg-white shadow-md rounded-lg p-6 mt-8">
+      <h2 className="text-xl font-semibold text-center bg-blue-500 text-white py-2 rounded">
+        SimpleSwap DApp
+      </h2>
 
-      <div className="flex flex-col items-center mb-4">
-        <button className="bg-yellow-500 text-white px-4 py-2 rounded mb-2" onClick={() => setIsReversed(!isReversed)}>
-          Switch direction: {isReversed ? "B → A" : "A → B"}
-        </button>
-        <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={getTokenPrice}>
-          Get price {isReversed ? "B → A" : "A → B"}
-        </button>
-        {price && (
-          <p className="mt-2">
-            1 {isReversed ? "B" : "A"} = {price} {isReversed ? "A" : "B"}
-          </p>
-        )}
-      </div>
-      {account ? (
-        <div className="text-center mb-4">
-          <p>💰 Balance A: {balanceA}</p>
-          <p>💰 Balance B: {balanceB}</p>
+      <div className="flex justify-between my-4" style={{color:"black"}}>
+        <div>
+          <p className="text-sm font-medium">Balance A</p>
+          <p className="text-lg">{balanceA}</p>
         </div>
-      ) : (
-        <p className="text-center bg-red-600 text-white font-bold px-4 py-2 rounded animate-pulse">
-          ⚠️ Please connect to MetaMask to view your token balances ⚠️
-        </p>
+        <div>
+          <p className="text-sm font-medium">Balance B</p>
+          <p className="text-lg">{balanceB}</p>
+        </div>
+      </div>
+
+      <div className="flex space-x-2 mb-4">
+        <button
+          onClick={() => setIsReversed(!isReversed)}
+          className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 rounded"
+        >
+          Switch {isReversed ? 'B→A' : 'A→B'}
+        </button>
+        <button
+          onClick={getTokenPrice}
+          className="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded"
+        >
+          Get Price
+        </button>
+      </div>
+
+      {price && (
+        <div className="bg-blue-100 text-blue-800 p-3 rounded mb-4 text-center">
+          1 {isReversed ? 'B' : 'A'} = {price} {isReversed ? 'A' : 'B'}
+        </div>
       )}
 
-      <div className="mb-4 flex justify-center">
+      <div className="mb-4">
         <input
-          type="text"
-          placeholder="Amount to swap"
+          type="number"
+          style={{color:"black"}}
+          placeholder="Amount"
           value={amount}
-          onChange={e => setAmount(e.target.value)}
-          className="border px-2 py-1 rounded mr-2"
+          onChange={(e) => setAmount(e.target.value)}
+          className="w-full border border-gray-300 rounded py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <button className="bg-purple-600 text-white px-4 py-2 rounded" onClick={swapTokens}>
-          Swap {isReversed ? "B → A" : "A → B"}
-        </button>
       </div>
+
+      <button
+        onClick={swapTokens}
+        disabled={loading}
+        className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded disabled:opacity-50"
+      >
+        {loading ? 'Swapping...' : `Swap ${isReversed ? 'B→A' : 'A→B'}`}
+      </button>
+
+      {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
     </div>
   );
 }

@@ -1,8 +1,10 @@
 import { HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
 import "hardhat-deploy";
-import "@nomicfoundation/hardhat-toolbox";
+import "solidity-coverage";
+//import "@nomicfoundation/hardhat-toolbox";
 import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-etherscan";
 
 dotenv.config();
 

@@ -1,0 +1,213 @@
+[33mcommit bd7a5e191a109774315cd8e3f7ab2f8b34a1ee49[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Fri Jul 11 11:08:41 2025 -0300
+
+    correcion del idioma
+
+[33mcommit 35734974e58fbae6b45ba66f463d2beaf9179eed[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Fri Jul 11 11:06:45 2025 -0300
+
+    previsualizacion del proyecto
+
+[33mcommit 167e7c688bce5d4beba9d27452c086c5407e158f[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Fri Jul 11 11:02:35 2025 -0300
+
+    agregue imagen en el readme
+
+[33mcommit b63d9992d75a6cfd458deb54cb3d068b3ecb0a08[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Fri Jul 11 10:46:27 2025 -0300
+
+    docs: enhance README structure and clarity, update features and testing sections
+
+[33mcommit 637e696f3250b6f36432d87329fff86fd486edce[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Fri Jul 11 10:15:23 2025 -0300
+
+    feat: update README for DEX functionality and enhance user experience in SimpleSwapApp
+    fix: upgrade @ethersproject/abi to version 5.8.0 for improved compatibility
+
+[33mcommit bd2a241d3f1b8bdd838dcfc12e8adeecc30aed74[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 23:00:23 2025 -0300
+
+    feat: add script to generate deployed contracts types and types definitions
+    
+    - Implemented `generate.ts` script to automate the generation of `deployedContracts.ts` from deployment JSON files.
+    - Created `generateDeployedContractsTypes` function in `generator.ts` to read deployment data and structure it into a TypeScript declaration.
+    - Defined types for contract declarations in `generic.ts` to ensure type safety for deployed contracts.
+
+[33mcommit 874e38eef5e3218077c381a5b7e187d949fa5f48[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 18:23:39 2025 -0300
+
+    Implement code changes to enhance functionality and improve performance
+
+[33mcommit 5b20a24b53f1054e4e9f86bbb5ff1fe899d57492[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 18:07:23 2025 -0300
+
+    chore: add .prettierignore to exclude specific directories and files
+    
+    feat: configure Netlify build settings for Next.js application
+
+[33mcommit 7e8db5f6634b572e661b215284329fc50636cbdb[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 17:32:41 2025 -0300
+
+    Implement code changes to enhance functionality and improve performance
+
+[33mcommit e3e1f3d5d9045aef82fdace7b23d0abece2b3a9f[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 17:32:20 2025 -0300
+
+    feat: add TypeScript plugin for Yarn, enhancing type support and caching mechanisms
+
+[33mcommit 5d34b8a28fa38a99faae495f9f99732c9ee23bdf[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 16:56:31 2025 -0300
+
+    Refactor code structure for improved readability and maintainability
+
+[33mcommit 7a63b0ce77fa35a52047b5e5e0288e099fa7fd59[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 16:01:28 2025 -0300
+
+    fix: add resolved URLs and integrity hashes for dependencies in package-lock.json
+
+[33mcommit 987abdd37bb43e9e66598775cc7aacbd517b6400[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 16:01:00 2025 -0300
+
+    Implement code changes to enhance functionality and improve performance
+
+[33mcommit f3add04497c9bce6e975701646a9118946c59062[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 15:27:50 2025 -0300
+
+    Implement feature X to enhance user experience and fix bug Y in module Z
+
+[33mcommit 55d7156375d33d5da0316dcdb4741d353d072360[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 15:19:33 2025 -0300
+
+    Implement code changes to enhance functionality and improve performance
+
+[33mcommit ea896efbefee2b5794af3aeb14e219bec978df1e[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 15:11:53 2025 -0300
+
+    actualice los package.json
+
+[33mcommit 05c8cac0e24779a2d1001df9dac69bbd601e9b58[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 14:43:27 2025 -0300
+
+    fix: lock ethereumjs-abi to HTTPS
+
+[33mcommit 1a5125599bc4cf23c3011ddc97205a3ade31453b[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 14:25:32 2025 -0300
+
+    quite el ssh del yarnlock
+
+[33mcommit 154fe9fed9091c626321e95a8d7d664b034d9088[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 14:22:22 2025 -0300
+
+    fix: update ethers version in package.json and add to package-lock.json
+
+[33mcommit 61f651234e2be3a69125f7e600901fb16e166d89[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 14:21:59 2025 -0300
+
+    fix: add ethers to nextjs workspace
+
+[33mcommit 0613e6390b1692da9fb23ecee0f91a8a70848fee[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 14:05:23 2025 -0300
+
+    fix: enable immutable installs in .yarnrc.yml
+
+[33mcommit 1ebc9cceb82b1ff486d6f71b30dea8008d3784f9[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 13:47:11 2025 -0300
+
+    fix: update yarn.lock
+
+[33mcommit 0955039b4e6059ff85ab63742259d1b9833e9ec1[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 13:28:28 2025 -0300
+
+    quite el ssh del yarn.lock
+
+[33mcommit e43be72f3cc28f5054fca8f6c684e07dd2061503[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 13:06:18 2025 -0300
+
+    corregi el yarn.lock
+
+[33mcommit 8369a3a72bedee73bde400d3e0e483b8cc49d08f[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 13:04:26 2025 -0300
+
+    quite husky
+
+[33mcommit 0c31b496a73c3bbef3aba38c8cc9b471ff1252bb[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 13:04:16 2025 -0300
+
+    corregi temporalmente el problema del ssh
+
+[33mcommit 014380de9ac6ba79432a0cd1b294523366f002dd[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 12:43:17 2025 -0300
+
+    fix: use HTTPS instead of SSH for ethereumjs-abi
+
+[33mcommit e68d99b3559e77fc393d45b5c78545a2abe2b1e2[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 11:53:07 2025 -0300
+
+    fix: Update footer link to point to the correct GitHub repository
+
+[33mcommit e7602d6ff447d8e6b2804e4b7754a9ace527fb08[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sun Jul 6 11:45:56 2025 -0300
+
+    feat: Add SimpleSwap DApp with token approval and swapping functionality
+    - Implemented approveTokens script to approve ERC20 tokens for SimpleSwap contract
+    - Developed SimpleSwapApp component for token swapping with price fetching and balance display
+    - Added SVG logo for the DApp
+
+[33mcommit 21d03e4297953f2e7c14b6601b1e953ecc328eb4[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sat Jul 5 21:22:36 2025 -0300
+
+    probando tests
+
+[33mcommit 8768952b832763fb5a9ed0472b7a9eb1740a3b3e[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sat Jul 5 14:27:06 2025 -0300
+
+    deploy de los contratos
+
+[33mcommit c559285d48893077e31160cc5d0282df76b350d9[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Sat Jul 5 11:08:48 2025 -0300
+
+    Instalacion de Scaffold
+
+[33mcommit af4745d44e361e359002e7c6a6130e9e5c7275d7[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Tue Jul 1 21:40:19 2025 -0300
+
+    Proyecto Base Front-End para EthKipu
+
+[33mcommit d2e95087fafc41b6df8e633eb03b46678788590d[m
+Author: Walter Liendo <walter.liendo@gmail.com>
+Date:   Tue Jul 1 21:37:19 2025 -0300
+
+    first commit

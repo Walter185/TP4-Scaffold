@@ -1,149 +1,259 @@
-# 🦄 SimpleSwap DEX
+# SimpleSwap DApp
 
-This project implements a decentralized exchange (DEX) similar to Uniswap V2, written in Solidity and powered by React and Scaffold-ETH for the frontend.
-
-## 🖼️ DApp Interface
-
-![DApp Interface Preview](./proyecto.jpg)
+**Student:** Walter Liendo
 
 ---
 
-## 📦 Contracts Deployed on Sepolia
+## Table of Contents
 
-- **TokenA**: [0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28](https://sepolia.etherscan.io/address/0x2c5dE7ce59F2540Fc6993966b12A4F92D3f8Bd28)
-- **TokenB**: [0x9167460d361769a62A447847EEecE91Df135d8f6](https://sepolia.etherscan.io/address/0x9167460d361769a62A447847EEecE91Df135d8f6)
-- **SimpleSwap**: [0xBF24790A19EB7b52944bC0a514bc9848a4C56387](https://sepolia.etherscan.io/address/0xBF24790A19EB7b52944bC0a514bc9848a4C56387)
-
----
-
-## 🚀 Features
-
-### ✅ Smart Contract Functionality
-
-- **Liquidity Management**
-  - `addLiquidity`
-  - `removeLiquidity`
-- **Token Swapping**
-  - `swapExactTokensForTokens`
-- **Price Queries**
-  - `getPrice`
-  - `getAmountOut`
-- **Math Utilities**
-  - `sqrt`
-
-### 🧪 Testing
-
-Unit tests written in TypeScript with Hardhat and Chai:
-
-- ✅ Add & Remove Liquidity
-- ✅ Swap Functionality
-- ✅ Deadline Validation
-- ✅ Price Calculation
-
-**Coverage Report:**
-
-- Statements: 97.37%
-- Branches: 50.00%
-- Functions: 100.00%
-- Lines: 93.22%
-
-> ✅ Meets EthKipu's minimum threshold of **≥ 50%** coverage
+1. [Project Overview](#project-overview)  
+2. [Prerequisites](#prerequisites)  
+3. [Installation](#installation)  
+4. [Environment Configuration](#environment-configuration)  
+5. [Smart Contracts](#smart-contracts)  
+   - [TokenA](#tokena)  
+   - [TokenB](#tokenb)  
+   - [SimpleSwap](#simpleswap)  
+6. [Deployment](#deployment)  
+7. [Testing & Coverage](#testing--coverage)  
+8. [Front‑End Application](#front‑end-application)  
+9. [Verification on Etherscan](#verification-on-etherscan)  
+10. [Usage](#usage)  
+11. [Contributing](#contributing)  
+12. [License](#license)
 
 ---
 
-## 📁 Project Structure
+## Project Overview
 
-```
-packages/
-├── hardhat/
-│   ├── contracts/
-│   │   ├── SimpleSwap.sol
-│   │   ├── TokenA.sol
-│   │   └── TokenB.sol
-│   ├── deploy/
-│   │   ├── 00_deploy_tokenA.ts
-|   |   ├── 01_deploy_tokenB.ts
-|   |   ├── 02_deploy_simpleSwap.ts
-│   │   └── 03_add_liquidity.ts
-│   ├── test/
-│   │   └── SimpleSwap.test.ts
-│   └── hardhat.config.ts
-├── nextjs/
-│   └── (React + Scaffold-ETH frontend)
+**SimpleSwap** is a minimalist decentralized exchange (DEX) built on Ethereum. It allows users to:
+- Swap between two ERC‑20 tokens (**TokenA** & **TokenB**).  
+- Provide or withdraw liquidity through an automated market maker (AMM).  
+
+This repository includes:
+- Mintable ERC‑20 tokens (`TokenA`, `TokenB`)  
+- A core AMM contract (`SimpleSwap.sol`)  
+- Full Hardhat setup with tests and coverage  
+- A Next.js front‑end for easy user interaction  
+
+---
+
+## Prerequisites
+
+- Node.js v16+  
+- npm or Yarn  
+- Hardhat  
+- MetaMask or any EIP‑1193 compatible wallet  
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/Walter185/TP4-Scaffold
+cd scaffold-tp4
+
+# Install root dependencies (if using a monorepo)
+npm install
+
+# Contracts (Hardhat)
+cd packages/hardhat
+npm install
+
+# Front‑end (Next.js)
+cd ../nextjs
+npm install
 ```
 
 ---
 
-## 🖼️ Frontend Features
+## Environment Configuration
 
-- ✅ MetaMask Integration
-- ✅ Token Swap Interface
-- ✅ Liquidity Pool Information
-- ✅ Live Price Display
-- ✅ Token Faucet for testing
-- 🔧 Built using `wagmi`, `viem`, and `rainbowkit`
+### Hardhat (`packages/hardhat/.env`)
+
+```ini
+SEPOLIA_RPC_URL=<Your Sepolia RPC URL>
+PRIVATE_KEY=<Your Deployer Private Key>
+ETHERSCAN_API_KEY=<Your Etherscan API Key>
+```
+
+### Next.js (`packages/nextjs/.env.local`)
+
+```ini
+NEXT_PUBLIC_PROVIDER=<RPC URL (localhost or Sepolia)>
+NEXT_PUBLIC_SWAP_ADDRESS=<Deployed SimpleSwap Address>
+NEXT_PUBLIC_TOKENA_ADDRESS=<Deployed TokenA Address>
+NEXT_PUBLIC_TOKENB_ADDRESS=<Deployed TokenB Address>
+```
 
 ---
 
-## 🧪 Deployment & Verification
+## Smart Contracts
 
-**Deploy Contracts**
+### TokenA.sol
+
+```solidity
+/// @title TokenA
+/// @notice ERC‑20 token used as the first asset in the AMM
+contract TokenA is ERC20, Ownable {
+    /// @param initialOwner The address that can mint new tokens
+    constructor(address initialOwner) ERC20("TokenA","TKA") Ownable(initialOwner) {}
+
+    /// @notice Mint new tokens
+    /// @param to Recipient address
+    /// @param amount Number of tokens to mint (in wei)
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+}
+```
+
+### TokenB.sol
+
+```solidity
+/// @title TokenB
+/// @notice ERC‑20 token used as the second asset in the AMM
+contract TokenB is ERC20, Ownable {
+    constructor(address initialOwner) ERC20("TokenB","TKB") Ownable(initialOwner) {}
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+}
+```
+
+### SimpleSwap.sol
+
+```solidity
+/// @title SimpleSwap
+/// @notice Automated Market Maker (AMM) enabling swaps and liquidity provision
+contract SimpleSwap is ERC20 {
+    /// @notice Address of TokenA
+    address public tokenA;
+    /// @notice Address of TokenB
+    address public tokenB;
+    /// @notice AMM reserves
+    uint public reserveA;
+    uint public reserveB;
+
+    /// @notice Emitted when liquidity is added
+    event LiquidityAdded(uint amountA, uint amountB, uint liquidity);
+
+    /// @param _tokenA Address of TokenA
+    /// @param _tokenB Address of TokenB
+    constructor(address _tokenA, address _tokenB) ERC20("LiquidityToken","LQT") {
+        tokenA = _tokenA;
+        tokenB = _tokenB;
+    }
+
+    /// @notice Add equal-value liquidity to the pool
+    /// @dev Requires prior ERC‑20 `approve`
+    function addLiquidity(
+        address _tokenA,
+        address _tokenB,
+        uint amountADesired,
+        uint amountBDesired,
+        uint amountAMin,
+        uint amountBMin,
+        address to,
+        uint deadline
+    ) external returns (uint amountA, uint amountB, uint liquidity) { /* ... */ }
+
+    /// @notice Remove liquidity and receive underlying tokens
+    function removeLiquidity(
+        address _tokenA, address _tokenB,
+        uint liquidity, uint amountAMin, uint amountBMin,
+        address to, uint deadline
+    ) external returns (uint amountA, uint amountB) { /* ... */ }
+
+    /// @notice Swap tokens given exact input amount
+    function swapExactTokensForTokens(
+        uint amountIn, uint amountOutMin,
+        address[] calldata path, address to, uint deadline
+    ) external { /* ... */ }
+
+    /// @notice Get current price (scaled by 1e18)
+    function getPrice(address _tokenA, address _tokenB) external view returns (uint price) { /* ... */ }
+
+    /// @notice AMM formula for output amount
+    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) public pure returns (uint amountOut) { /* ... */ }
+}
+```
+
+---
+
+## Deployment
+
+### Local Network
 
 ```bash
 cd packages/hardhat
-yarn hardhat deploy --network sepolia
+npx hardhat node
+npx hardhat deploy --network localhost
 ```
 
-**Verify Contracts**
+### Sepolia Testnet
 
 ```bash
-yarn hardhat verify --network sepolia <contract_address> <constructor_args>
+npx hardhat deploy --network sepolia
 ```
 
-**Demo Requirements** (if submitting a video):
-
-- ✅ Show token `approve` via frontend
-- ✅ Call `getPrice` or `getAmountOut`
-- ✅ Show successful transaction and Etherscan link
-
 ---
 
-## 📄 NatSpec Documentation
-
-All smart contracts are documented with Solidity NatSpec:
-
-- ✅ Public and external functions
-- ✅ Events with parameters
-- ✅ State variables and modifiers
-
----
-
-## 🧰 Getting Started
+## Testing & Coverage
 
 ```bash
 cd packages/hardhat
-cp .env.example .env
-yarn install
-yarn deploy --network sepolia
+npx hardhat test
+npx hardhat coverage
+```
 
+Coverage report available under `packages/hardhat/coverage/index.html`.
+
+---
+
+## Front‑End Application
+
+```bash
 cd packages/nextjs
-cp .env.example .env.local
-yarn install
-yarn dev
+npm run dev
+```
+
+Features:
+- MetaMask integration  
+- Real-time balances  
+- Price lookup  
+- Token approvals & swaps  
+
+---
+
+## Verification on Etherscan
+
+```bash
+npx hardhat verify --network sepolia   --contract contracts/TokenA.sol:TokenA <TokenA_Address> <Deployer>
+
+npx hardhat verify --network sepolia   --contract contracts/TokenB.sol:TokenB <TokenB_Address> <Deployer>
+
+npx hardhat verify --network sepolia   --contract contracts/SimpleSwap.sol:SimpleSwap <Swap_Address> <TokenA_Address> <TokenB_Address>
 ```
 
 ---
 
-## 🙌 Acknowledgements
+## Usage
 
-- Scaffold-ETH 2
-- Hardhat
-- OpenZeppelin
-- Viem / Wagmi / RainbowKit
-- EthKipu Community
+1. Connect MetaMask  
+2. View balances & price  
+3. Enter an amount & swap  
+4. (Future) Add/remove liquidity via UI  
 
 ---
 
-## 👨‍🎓 Author
+## Contributing
 
-**Walter Liendo** – Student at EthKipu
+Pull requests welcome. Please adhere to coding standards and add tests for new features.
+
+---
+
+## License
+
+MIT License © Walter Liendo

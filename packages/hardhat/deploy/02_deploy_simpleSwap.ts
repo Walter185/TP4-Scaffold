@@ -1,14 +1,14 @@
+// 02_deploy_simpleSwap.ts
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 
-const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const deploySimpleSwap: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployments, getNamedAccounts } = hre;
-  const { deploy } = deployments;
+  const { deploy, get } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  // Obtiene las direcciones de los contratos TokenA y TokenB ya desplegados
-  const tokenADeployment = await deployments.get("TokenA");
-  const tokenBDeployment = await deployments.get("TokenB");
+  const tokenADeployment = await get("TokenA");
+  const tokenBDeployment = await get("TokenB");
 
   await deploy("SimpleSwap", {
     from: deployer,
@@ -17,5 +17,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   });
 };
 
-export default func;
-func.tags = ["SimpleSwap"];
+export default deploySimpleSwap;
+deploySimpleSwap.tags = ["SimpleSwap"];
+deploySimpleSwap.dependencies = ["TokenA", "TokenB"];
